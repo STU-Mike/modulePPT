@@ -27,116 +27,201 @@
 			<div class="slides">
 <!--				<section>Slide 1</section>-->
 <!--				<section>Slide 2</section>-->
-				<section data-markdown data-separator="---" data-separator-vertical="--"  >
-					<script type="text/template">
-						# node.js模块系统知识分享
+<!--				<section data-markdown data-separator="-&#45;&#45;" data-separator-vertical="&#45;&#45;"  >-->
+<!--					<script type="text/template">-->
+<!--						# 第八章 动态存储管理-->
+<!--						##### 17计算机麦健文-->
+<!--						&#45;&#45;-->
+<!--						## 8.1 概述-->
+<!--						- 存储管理是操作系统的重要组成部分，它负责管理计算机系统的存储器。-->
+<!--						- 动态存储的基本问题：**系统如何应用户提出的“请求”分配内存？又如何回收那些用户不再使用而释放的内存，以备新的请求产生时重新进行分配。**-->
 
-						##### 分享人：小麦
+<!--						&#45;&#45; -->
+<!--						- **请求**：用户进入系统的一个作业，也可能是程序执行过程中的一个动态变量-->
+<!--						- **占用块**：已分配给用户使用的连续的内存区-->
+<!--						- **可利用空间块/空闲块**：未曾分配的地址连续的内存区-->
 
-						###### ppt制作：reveal.js
+<!--						&#45;&#45;-->
+<!--						- **系统运行的初期**：整个内存区基本上分隔成两大部分，低地址区包含若干占用块，高地址区（分配后的剩余部分）是一个空闲块。-->
+<!--						- **系统运行一段时间后**：有的用户运行结束，它所占用的内存区变成空闲块，这时就会使整个内存区呈现出占用块和空闲块交错的情况。如下图-->
+<!--						&#45;&#45;-->
+<!--						![image.png](https://upload-images.jianshu.io/upload_images/12192297-c8b58b62ff35b211.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)-->
 
-						---
 
-						## 👉🏻node.js模块系统
+<!--						&#45;&#45;-->
+<!--						- 问题来了，假如此时有新的用户进入系统请求分配内存，系统应该如何分配？-->
+<!--						有两种策略-->
+<!--						1. 第一种策略先把高地址的空闲块分配出去，当分配完或剩余的空闲块不够时，系统就会去回收那些所有用户都不用的空闲块，然后再重新组织内存，将这些内存块连接在一起。-->
+<!--						2. 第二种策略是一旦用户运行结束，系统就会把它的占内存区释放为空闲块，然后每一个新的请求进来时，就会从中找出一个合适的空闲块分配出去。为了能够记录空闲块的位置，我们需要一张”可利用空间表“-->
 
-						- node.js使用基于模块系统的文件。每个文件就是它自己的模块。
-						- 模块导出：`module.exports`变量
-						- 模块导入：require函数。
+<!--						&#45;&#45; -->
+<!--						**可利用空间表**的结构大致分为①目录表②链表，如下图所示-->
+<!--						![image.png](https://upload-images.jianshu.io/upload_images/12192297-87e6f991f7292082.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)-->
 
-						--
+<!--						&#45;&#45;-->
+<!--						## thanks-->
 
-						- 例子
-						- 在一个目录下创建**myData.js**文件以及一个函数，为了让文件导出这个函数，我们将其分配给module.exports。
-						- ![屏幕快照 2019-05-11 下午9.24.12.png](https://upload-images.jianshu.io/upload_images/12192297-11e8260f32c357c6.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
-						- 在同级目录创建myValue.js文件使用上面的函数，使用`require`函数导入myData，并将返回的值存储在局部变量中。
-						- ![屏幕快照 2019-05-11 下午9.24.21.png](https://upload-images.jianshu.io/upload_images/12192297-25035c8fd3f68a6c.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+<!--					</script>-->
+<!--				</section>-->
+				<section>
+					<section>
+						<h1>第八章 动态存储管理</h1>
+						<h5>17计算机麦健文</h5>
+					</section>
+					<section align="left" data-transition="fade">
+						<h3>8.1 概述</h3>
+						<p>存储管理是操作系统的重要组成部分，它负责管理计算机系统的存储器。</p>
+						<p>动态存储的基本问题：<strong>系统如何应用户提出的“请求”分配内存？又如何回收那些用户不再使用而释放的内存，以备新的请求产生时重新进行分配。</strong></p>
+					</section>
+					<section align="left" data-transition="slide">
+						<p><b style="color:red">请求</b>:用户进入系统的一个作业，也可能是程序执行过程中的一个动态变量</p>
+						<p><b style="color:red">占用块</b>:已分配给用户使用的连续的内存区</p>
+						<p><b style="color:red">可利用空间块/空闲块</b>：未曾分配的地址连续的内存区</p>
+					</section>
+					<section align="left" data-transition="concave">
+						<p><b style="color:red">系统运行的初期</b>：整个内存区基本上分隔成两大部分，低地址区包含若干占用块，高地址区（分配后的剩余部分）是一个空闲块。</p>
+						<p><b style="color:red">系统运行一段时间后</b>：有的用户运行结束，它所占用的内存区变成空闲块，这时就会使整个内存区呈现出占用块和空闲块交错的情况。如下图</p>
+					</section>
+					<section>
+						<img src="./public/1.jpeg" style="height: 500px;width: auto;"/>
+					</section>
+					<section align="left" data-transition="convex">
+						<h4 style="color:red">问题来了，假如此时有新的用户进入系统请求分配内存，系统应该如何分配？</h4>
+						<h4>有两种策略</h4>
+						<h4>1. 第一种策略先把高地址的空闲块分配出去，当分配完或剩余的空闲块不够时，系统就会去回收那些所有用户都不用的空闲块，然后再重新组织内存，将这些内存块连接在一起。</h4>
+					</section>
+					<section align="left">
+						<h4>2. 第二种策略是一旦用户运行结束，系统就会把它的占内存区释放为空闲块，然后每一个新的请求进来时，就会从中找出一个合适的空闲块分配出去。为了能够记录空闲块的位置，我们需要一张<span style="color:red">”可利用空间表“</span></h4>
+					</section>
+					<section data-transition="concave">
+						<p><b style="color:red">可利用空间表</b>的结构大致分为①目录表②链表，如下图所示</p>
+						<img src="./public/2.jpeg" style="height: 500px;width: auto;"/>
+					</section>
+					<section data-transition="convex">
+						<h1>thanks</h1>
+					</section>
+				</section>
+				<section>
+<!--					## 8.2 可利用空间表及分配方法-->
+<!--					可利用空间表包括**目录表**和**链表**两种结构，我们这里主要说的是链表结构-->
+<!--					链表结构中，可利用空间表中的每一块可分配的空闲块对应着链表的一个节点。-->
+<!--					![image.png](https://upload-images.jianshu.io/upload_images/12192297-707683e0d7ad6662.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)-->
+<!--					当用户请求分配空间时，系统从可利用空间表中删除一个节点分配给用户，当用户释放其所占内存时，系统即回收并将该空闲块插入到可利用空间块。所以可利用空间表也被称作”存储池“。-->
+<!--					可利用空间表的三种不同结构形式-->
+<!--					**第一种情况是，系统运行期间所有用户请求分配的存储量大小相同。**-->
+<!--					这种情况，一般是系统开始运行的时候就把内存区分成若干个大小相同的空闲块，并用指针串起来。-->
+<!--					当请求来的时候，系统将链表的第一个节点分配给用户，当用户释放内存时，系统将该空闲块直接插入表头。-->
+<!--					**第二种情况是，系统运行期间用户请求分配的存储量有若干种规格**-->
+<!--					这种情况是建立若干个可利用空间表，同一个链表中的结点大小相同。-->
+<!--					例如-->
+<!--					某动态管理系统中的用户将请求分配2个字，4个字或8个字，那么系统建立3个结点大小为3个字、5个字、9个字的链表，它们的表头指针分别是av2、av4、av8.如下图-->
+<!--					![image.png](https://upload-images.jianshu.io/upload_images/12192297-f80b0b29e43a022e.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)-->
+<!--					当用户请求分配空间时，系统就会在分配相应大小的空闲块给用户，当小的内存块没有时，会查看是否有大的空闲块，如果有则把大的空闲块拆成小的空闲块，然后一部分返回给用户，剩余部分插入到相应大小的链表中。-->
+<!--					特殊情况：当大的空闲块没有，但小的空闲块有的时候该怎么办？-->
+<!--					解决方法：存储紧缩-->
+<!--					**第三种情况是，系统运行期间分配给用户的内存块的大小不固定，随请求而变**-->
+<!--					这种情况下，可利用空间表中的结点即空闲块的大小也是随意的。-->
+<!--					该情况下，链表结点结构如下-->
+<!--					![image.png](https://upload-images.jianshu.io/upload_images/12192297-bc21ea9cf68a6fb2.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)-->
+<!--					size：结点大小域，即空闲块的存储量-->
+<!--					space：地址连续的内存空间-->
 
-						--
+<!--					问题：当用户请求储存大小空间为n的空闲块时，而可利用空间表中有若干个不小于n的空闲块，应该分配哪块？-->
+<!--					解决方法：-->
+<!--					1. 首次拟合法-->
+<!--					2. 最佳拟合法-->
+<!--					3. 最差拟合法-->
+<!--					### 首次拟合法-->
+<!--					从表头指针开始查找可利用空间表，将找到的第一个大小不小于n的空闲块的一部分给用户。可利用空间表本身是无序的，回收的时候，直接插入表头即可-->
+<!--					### 最佳拟合法-->
+<!--					将可利用空间表中一个不小于n且最接近n的空闲块的一部分分配给用户。一般会按照空间快大小排序。回收的时候要插入到合适的位置上-->
+<!--					### 最差拟合法-->
+<!--					将可利用空间中不小于n且是链表最大的空闲块的一部分分配给用户。一般会先按照空间块大小从大到小排序，这样每次分配只需要将第一个节点删除并将其一部分分配给用户，剩余的部分插入到链表的适合位置，回收时也是一样，需要将空间块插入到合适的位置。-->
+<!--					例子-->
 
-						#### 👉🏻导出多个变量的方法
-
-						1. 创建一个新的对象字面量并将其分配给module.exports
-						- ![屏幕快照 2019-05-11 下午9.24.48.png](https://upload-images.jianshu.io/upload_images/12192297-2958cb7931c9cb03.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
-						2. 做为`module.exports`的属性，一个一个导入
-						- ![屏幕快照 2019-05-11 下午9.24.57.png](https://upload-images.jianshu.io/upload_images/12192297-05480bc4673c9424.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
-						--
-						3. 直接用exports别名，其实 exports = module.exports
-						- ![屏幕快照 2019-05-11 下午9.25.05.png](https://upload-images.jianshu.io/upload_images/12192297-e3ce9b0dbb7d0afb.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
-						###### 上面三种方法是等效的
-
-						![image.png](https://upload-images.jianshu.io/upload_images/12192297-844eed00bab7e09f.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
-
-						--
-
-						### 👉🏻模块的最佳实践
-
-						1. **使用相对路径**：在使用基于文件的模块时，你需要使用相对路径(也就是用require('./myData')而不是require('myData'))。
-						2. 导出整个文件夹：当你有很多模块都需要导入其他文件的时候，使用一个文件作为中间文件。
-						1. 例如
-						- ![屏幕快照 2019-05-11 下午9.25.51.png](https://upload-images.jianshu.io/upload_images/12192297-66b4755863c98c8d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
-						--
-						2. 那么我们可以创建一个index.js文件，导入上面所有文件
-						- ![屏幕快照 2019-05-11 下午9.25.57.png](https://upload-images.jianshu.io/upload_images/12192297-e1f9bf4df6a49a86.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
-						3. 而当你需要使用这些文件的时候，你就只需要导入index文件。
-						- ![屏幕快照 2019-05-11 下午9.26.03.png](https://upload-images.jianshu.io/upload_images/12192297-66cac415b5868dfe.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
-
-						---
-
-						### 👉🏻nodejs require模块
-
-						###### Node.js require函数是将模块导入到当前文件的主要方式。在Node.js中有三种的模块:核心模块，文件模块和外部node_modules。
-
-						- 当我们使用相对路径(如require(./filename))调用require是，node.js会在新的作用域中运行目标js文件，并返回分配给该文件中module.exports的最终值。
-
-						--
-
-						### 👉🏻require函数的一些知识点
-						- 阻塞：require函数阻止进一步的代码执行，直到模块被加载完毕
-						- 缓存：第一次对特定文件进行require调用后，将缓存module.exports。
-						- ![屏幕快照 2019-05-11 下午9.23.06.png](https://upload-images.jianshu.io/upload_images/12192297-90ff75da1eded630.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
-						![屏幕快照 2019-05-11 下午9.23.27.png](https://upload-images.jianshu.io/upload_images/12192297-88ae75bb0de9cf0d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
-
-						--
-
-						###### 核心模块
-
-						1. 核心模块在requiere()中具有最高优先级。在模块命名冲突的情况下，加载核心模块
-						- 例如：Node包含一个名为http的核心模块。调用require('http')将始终加载核心http模块。
-
-						--
-
-						###### 解析模块位置
-
-						- 要找到某个模块的位置可以使用require.resolve()函数。它可以返回模块的路径
-						- 如果是核心模块，则返回模块的名称
-						- 如果是文件模块，则返回模块的文件名。
-						- 如果找不到的话，即会抛出错误
-
-						---
-
-						### 👉🏻nodejs File（文件）模块
-
-						###### 文件模块是从文件系统加载的模块，可以使用绝对路径，相对路径或node_modules目录来引用文件模块。
-						- 绝对路径：一斜杠(/)开头的模块名称被视为绝对路径，例如require("/some/path/foo")；
-						- 相对路径：以一个或两个点(.或..)开头的模块路径被称为相对路径。它们被认为是与调用require()有关的文件，如(require("./foo"))。
-						--
-						- 如果模块的路径不对应于核心模块，绝对路径或相对路径，node就会在node_modules文件夹中进行搜索，首先是从脚本的父目录开始，并附加/node_modules。找不到的话，node会沿目录树向上移动一级。追加/node_modules，然后再搜索。
-						- 重复上面模式，直至找到模块或目录结构的根目录。如果找不到就会抛出错误。
-
-						---
-
-						### 👉🏻nnodejs path模块
-
-						- __dirname:表示当前执行脚本所在的目录
-						- __filename:表示当前正在执行的脚本的文件名。它将输出文件所在位置的绝对路径。
-						- path.join()**：**用于连接路径。该方法的主要用途在于，会正确使用当前系统的路径分隔符，Unix系统是”/”，Windows系统是”\”。
-						--
-						- 例如
-						- ![image.png](https://upload-images.jianshu.io/upload_images/12192297-09e1b4693e559507.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
-						- ![image.png](https://upload-images.jianshu.io/upload_images/12192297-9856355b1db3e61d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
-						---
-						## 🙃Thank you for listening🙃
-					</script>
+<!--					### 三种分配策略对比-->
+<!--					最佳拟合法：适用于请求分配的内存大小范围较广的系统-->
+<!--					最差拟合法：使用与请求分配的内存大小范围较窄的系统-->
+<!--					首次拟合法：适用于系统事先不掌握运行期间可能出现的请求分配和释放的信息的情况。-->
+<!--					时间上：-->
+<!--					首次拟合法：分配时需要查找链表，而回收时直接插入-->
+<!--					最差拟合法：分配时无需查找链表，而回收时需要查找链表插入到合适位置-->
+<!--					最佳拟合法：分配和回收都需要查找链表，最耗时间-->
+<!--					选择分配策略需要考虑的因素：用户逻辑要求，请求分配量的大小分布，分配和释放频率以及效率对系统的重要性-->
+<!--					实际问题还需要考虑结点合并：解决小的空闲块无法被利用问题。-->
+					<section align="left" data-transition="fade">
+						<h2>8.2 可利用空间表及分配方法</h2>
+						<p>可利用空间表包括<span style="color:red;">目录表</span>和<span style="color:red;">链表</span>两种结构，我们这里主要说的是链表结构</p>
+					</section>
+					<section align="left" data-transition="fade">
+						<p>链表结构中，可利用空间表中的每一块可分配的空闲块对应着链表的一个节点。</p>
+					</section>
+					<section>
+						<img src="./public/3.jpeg" style="height:400px;width:auto;"/>
+						<p>当用户请求分配空间时，系统从可利用空间表中删除一个节点分配给用户，当用户释放其所占内存时，系统即回收并将该空闲块插入到可利用空间块。所以可利用空间表也被称作<span style="color:red;">”存储池“<span>。</p>
+					</section>
+					<section align="left" data-transition="fade">
+						<h2>可利用空间表的三种不同结构形式</h2>
+						<p style="color:red;">第一种情况是，系统运行期间所有用户请求分配的存储量大小相同。</p>
+						<p>这种情况，一般是系统开始运行的时候就把内存区分成若干个大小相同的空闲块，并用指针串起来。</p>
+						<p>当请求来的时候，系统将链表的第一个节点分配给用户，当用户释放内存时，系统将该空闲块直接插入表头。</p>
+					</section>
+					<section align="left" data-transition="slide">
+						<p style="color:red;">第二种情况是，系统运行期间用户请求分配的存储量有若干种规格</p>
+						<p>这种情况是建立若干个可利用空间表，同一个链表中的结点大小相同。</p>
+					</section>
+					<section align="left" data-transition="slide">
+						<p>例如</p>
+						<p>某动态管理系统中的用户将请求分配2个字，4个字或8个字，那么系统建立3个结点大小为3个字、5个字、9个字的链表，它们的表头指针分别是av2、av4、av8.如下图</p>
+					</section>
+					<section>
+						<img src="./public/4.jpeg" style="height:400px; width:auto;">
+						<p>当用户请求分配空间时，系统就会在分配相应大小的空闲块给用户，当小的内存块没有时，会查看是否有大的空闲块，如果有则把大的空闲块拆成小的空闲块，然后一部分返回给用户，剩余部分插入到相应大小的链表中。</p>
+					</section>
+					<section align="left" data-transition="slide">
+						<p style="color:red;">第三种情况是，系统运行期间分配给用户的内存块的大小不固定，随请求而变</p>
+						<p>这种情况下，可利用空间表中的结点即空闲块的大小也是随意的。</p>
+					</section>
+					<section align="left" data-transition="convex">
+						<p>该情况下，链表结点结构如下</p>
+						<img src="./public/4.jpeg" style="height:600px;width:auto;"/>
+						<p>size：结点大小域，即空闲块的存储量</p>
+						<p>space：地址连续的内存空间</p>
+					</section>
+					<section align="left" data-transition="convex">
+						<p style="color:red;">问题：当用户请求储存大小空间为n的空闲块时，而可利用空间表中有若干个不小于n的空闲块，应该分配哪块？</p>
+						<p>有三种解决办法</p>
+						<p>1. 首次拟合法</p>
+						<p>2. 最佳拟合法</p>
+						<p>3. 最差拟合法</p>
+					</section>
+					<section align="left" data-transition="convex">
+						<p style="color:red;">1. 首次拟合法</p>
+						<p>从表头指针开始查找可利用空间表，将找到的第一个大小不小于n的空闲块的一部分给用户。可利用空间表本身是无序的，回收的时候，直接插入表头即可</p>
+					</section>
+					<section align="left" data-transition="convex">
+						<p style="color:red;">2. 最佳拟合法</p>
+						<p>将可利用空间表中一个不小于n且最接近n的空闲块的一部分分配给用户。一般会按照空间快大小排序。回收的时候要插入到合适的位置上</p>
+					</section>
+					<section>
+						<p style="color:red;">3. 最差拟合法</p>
+						<p>将可利用空间中不小于n且是链表最大的空闲块的一部分分配给用户。一般会先按照空间块大小从大到小排序，这样每次分配只需要将第一个节点删除并将其一部分分配给用户，剩余的部分插入到链表的适合位置，回收时也是一样，需要将空间块插入到合适的位置。</p>
+					</section>
+					<section align="left" data-transition="fade">
+						<H3>三种分配策略对比较</H3>
+						<p>最佳拟合法：适用于请求分配的内存大小范围较广的系统</p>
+						<p>最差拟合法：使用与请求分配的内存大小范围较窄的系统</p>
+						<p>首次拟合法：适用于系统事先不掌握运行期间可能出现的请求分配和释放的信息的情况</p>
+					</section>
+					<section align="left" data-transition="fade">
+						<h3>时间上</h3>
+						<p>首次拟合法：分配时需要查找链表，而回收时直接插入</p>
+						<p>最差拟合法：分配时无需查找链表，而回收时需要查找链表插入到合适位置</p>
+						<p>最佳拟合法：分配和回收都需要查找链表，最耗时间</p>
+					</section>
+					<section data-transition="convex">
+						<h1>thanks</h1>
+					</section>
 				</section>
 			</div>
 		</div>
