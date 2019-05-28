@@ -223,6 +223,38 @@
 						<h1>thanks</h1>
 					</section>
 				</section>
+				<section>
+					<section>
+						<h2>经典例题</h2>
+						<p>反转一个单链表</p>
+						<p>示例</p>
+						<p>输入: 1->2->3->4->5->NULL</p>
+						<p>输出: 5->4->3->2->1->NULL</p>
+					</section>
+					<section>
+						<pre>
+						<code data-trim>
+							struct ListNode {
+							     int val;
+							     struct ListNode *next;
+							};
+							struct ListNode* reverseList(struct ListNode* head){
+							if (!head) return NULL;
+							struct ListNode *node = head, *next = head->next, *prev = NULL;
+							while (next) {
+							node->next = prev;
+							prev = node;
+							node = next;
+							next = node->next;
+							}
+							node->next = prev;
+							return node;
+							}
+						</code>
+						</pre>
+					</section>
+				</section>
+
 			</div>
 		</div>
 
