@@ -8,7 +8,7 @@
 
 		<link rel="stylesheet" href="css/reset.css">
 		<link rel="stylesheet" href="css/reveal.css">
-		<link rel="stylesheet" href="css/theme/black.css">
+		<link rel="stylesheet" href="css/theme/beige.css">
 
 		<!-- Theme used for syntax highlighting of code -->
 		<link rel="stylesheet" href="lib/css/monokai.css">
@@ -25,48 +25,10 @@
 	<body>
 		<div class="reveal">
 			<div class="slides">
-<!--				<section>Slide 1</section>-->
-<!--				<section>Slide 2</section>-->
-<!--				<section data-markdown data-separator="-&#45;&#45;" data-separator-vertical="&#45;&#45;"  >-->
-<!--					<script type="text/template">-->
-<!--						# 第八章 动态存储管理-->
-<!--						##### 17计算机麦健文-->
-<!--						&#45;&#45;-->
-<!--						## 8.1 概述-->
-<!--						- 存储管理是操作系统的重要组成部分，它负责管理计算机系统的存储器。-->
-<!--						- 动态存储的基本问题：**系统如何应用户提出的“请求”分配内存？又如何回收那些用户不再使用而释放的内存，以备新的请求产生时重新进行分配。**-->
-
-<!--						&#45;&#45; -->
-<!--						- **请求**：用户进入系统的一个作业，也可能是程序执行过程中的一个动态变量-->
-<!--						- **占用块**：已分配给用户使用的连续的内存区-->
-<!--						- **可利用空间块/空闲块**：未曾分配的地址连续的内存区-->
-
-<!--						&#45;&#45;-->
-<!--						- **系统运行的初期**：整个内存区基本上分隔成两大部分，低地址区包含若干占用块，高地址区（分配后的剩余部分）是一个空闲块。-->
-<!--						- **系统运行一段时间后**：有的用户运行结束，它所占用的内存区变成空闲块，这时就会使整个内存区呈现出占用块和空闲块交错的情况。如下图-->
-<!--						&#45;&#45;-->
-<!--						![image.png](https://upload-images.jianshu.io/upload_images/12192297-c8b58b62ff35b211.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)-->
-
-
-<!--						&#45;&#45;-->
-<!--						- 问题来了，假如此时有新的用户进入系统请求分配内存，系统应该如何分配？-->
-<!--						有两种策略-->
-<!--						1. 第一种策略先把高地址的空闲块分配出去，当分配完或剩余的空闲块不够时，系统就会去回收那些所有用户都不用的空闲块，然后再重新组织内存，将这些内存块连接在一起。-->
-<!--						2. 第二种策略是一旦用户运行结束，系统就会把它的占内存区释放为空闲块，然后每一个新的请求进来时，就会从中找出一个合适的空闲块分配出去。为了能够记录空闲块的位置，我们需要一张”可利用空间表“-->
-
-<!--						&#45;&#45; -->
-<!--						**可利用空间表**的结构大致分为①目录表②链表，如下图所示-->
-<!--						![image.png](https://upload-images.jianshu.io/upload_images/12192297-87e6f991f7292082.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)-->
-
-<!--						&#45;&#45;-->
-<!--						## thanks-->
-
-<!--					</script>-->
-<!--				</section>-->
 				<section>
 					<section>
-						<h1>第八章 动态存储管理</h1>
-						<h5>17计算机麦健文</h5>
+						<h2>第八章 动态存储管理</h2>
+						<h5>pre：小麦</h5>
 					</section>
 					<section align="left" data-transition="fade">
 						<h3>8.1 概述</h3>
@@ -102,53 +64,6 @@
 					</section>
 				</section>
 				<section>
-<!--					## 8.2 可利用空间表及分配方法-->
-<!--					可利用空间表包括**目录表**和**链表**两种结构，我们这里主要说的是链表结构-->
-<!--					链表结构中，可利用空间表中的每一块可分配的空闲块对应着链表的一个节点。-->
-<!--					![image.png](https://upload-images.jianshu.io/upload_images/12192297-707683e0d7ad6662.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)-->
-<!--					当用户请求分配空间时，系统从可利用空间表中删除一个节点分配给用户，当用户释放其所占内存时，系统即回收并将该空闲块插入到可利用空间块。所以可利用空间表也被称作”存储池“。-->
-<!--					可利用空间表的三种不同结构形式-->
-<!--					**第一种情况是，系统运行期间所有用户请求分配的存储量大小相同。**-->
-<!--					这种情况，一般是系统开始运行的时候就把内存区分成若干个大小相同的空闲块，并用指针串起来。-->
-<!--					当请求来的时候，系统将链表的第一个节点分配给用户，当用户释放内存时，系统将该空闲块直接插入表头。-->
-<!--					**第二种情况是，系统运行期间用户请求分配的存储量有若干种规格**-->
-<!--					这种情况是建立若干个可利用空间表，同一个链表中的结点大小相同。-->
-<!--					例如-->
-<!--					某动态管理系统中的用户将请求分配2个字，4个字或8个字，那么系统建立3个结点大小为3个字、5个字、9个字的链表，它们的表头指针分别是av2、av4、av8.如下图-->
-<!--					![image.png](https://upload-images.jianshu.io/upload_images/12192297-f80b0b29e43a022e.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)-->
-<!--					当用户请求分配空间时，系统就会在分配相应大小的空闲块给用户，当小的内存块没有时，会查看是否有大的空闲块，如果有则把大的空闲块拆成小的空闲块，然后一部分返回给用户，剩余部分插入到相应大小的链表中。-->
-<!--					特殊情况：当大的空闲块没有，但小的空闲块有的时候该怎么办？-->
-<!--					解决方法：存储紧缩-->
-<!--					**第三种情况是，系统运行期间分配给用户的内存块的大小不固定，随请求而变**-->
-<!--					这种情况下，可利用空间表中的结点即空闲块的大小也是随意的。-->
-<!--					该情况下，链表结点结构如下-->
-<!--					![image.png](https://upload-images.jianshu.io/upload_images/12192297-bc21ea9cf68a6fb2.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)-->
-<!--					size：结点大小域，即空闲块的存储量-->
-<!--					space：地址连续的内存空间-->
-
-<!--					问题：当用户请求储存大小空间为n的空闲块时，而可利用空间表中有若干个不小于n的空闲块，应该分配哪块？-->
-<!--					解决方法：-->
-<!--					1. 首次拟合法-->
-<!--					2. 最佳拟合法-->
-<!--					3. 最差拟合法-->
-<!--					### 首次拟合法-->
-<!--					从表头指针开始查找可利用空间表，将找到的第一个大小不小于n的空闲块的一部分给用户。可利用空间表本身是无序的，回收的时候，直接插入表头即可-->
-<!--					### 最佳拟合法-->
-<!--					将可利用空间表中一个不小于n且最接近n的空闲块的一部分分配给用户。一般会按照空间快大小排序。回收的时候要插入到合适的位置上-->
-<!--					### 最差拟合法-->
-<!--					将可利用空间中不小于n且是链表最大的空闲块的一部分分配给用户。一般会先按照空间块大小从大到小排序，这样每次分配只需要将第一个节点删除并将其一部分分配给用户，剩余的部分插入到链表的适合位置，回收时也是一样，需要将空间块插入到合适的位置。-->
-<!--					例子-->
-
-<!--					### 三种分配策略对比-->
-<!--					最佳拟合法：适用于请求分配的内存大小范围较广的系统-->
-<!--					最差拟合法：使用与请求分配的内存大小范围较窄的系统-->
-<!--					首次拟合法：适用于系统事先不掌握运行期间可能出现的请求分配和释放的信息的情况。-->
-<!--					时间上：-->
-<!--					首次拟合法：分配时需要查找链表，而回收时直接插入-->
-<!--					最差拟合法：分配时无需查找链表，而回收时需要查找链表插入到合适位置-->
-<!--					最佳拟合法：分配和回收都需要查找链表，最耗时间-->
-<!--					选择分配策略需要考虑的因素：用户逻辑要求，请求分配量的大小分布，分配和释放频率以及效率对系统的重要性-->
-<!--					实际问题还需要考虑结点合并：解决小的空闲块无法被利用问题。-->
 					<section align="left" data-transition="fade">
 						<h2>8.2 可利用空间表及分配方法</h2>
 						<p>可利用空间表包括<span style="color:red;">目录表</span>和<span style="color:red;">链表</span>两种结构，我们这里主要说的是链表结构</p>
@@ -223,38 +138,233 @@
 						<h1>thanks</h1>
 					</section>
 				</section>
-				<section>
-					<section>
-						<h2>经典例题</h2>
-						<p>反转一个单链表</p>
-						<p>示例</p>
-						<p>输入: 1->2->3->4->5->NULL</p>
-						<p>输出: 5->4->3->2->1->NULL</p>
+				<section align="left">
+					<section align="left" data-transition="fade">
+						<h2>8.3 边界标识法</h2>
+						<p>一种解决系统中内存碎片过多而无法使用的方法</p>
 					</section>
-					<section>
+					<section align="left" data-transition="fade">
+						<p>使用边界标识法的可利用空间表本身是双向循环链表，每个内存块结点都有指向前驱和后继结点的指针域。</p>
+						使用边界标识法时，可利用空间表的结点构成如下图
+						<img src="./public/5.png" style="height: 250px;" />
+						<p>每个结点中包含3个区域，head域foot域和space域</p>
+					</section>
+					<section align="left" data-transition="fade">
+						<img src="./public/5.png" style="height: 250px;" />
+						<p>space 域表示为该内存块的大小，它的大小通过 head 域中的 size 值表示。</p>
+						<p>head 域中包含有 4 部分：llink 和 rlink 分别表示指向当前内存块结点的直接前驱和直接后继。tag 值用于标记当前内存块的状态，是占用块（用 1 表示）还是空闲块（用 0 表示）。size 用于记录该内存块的存储大小。</p>
+					</section>
+					<section align="left" data-transition="convex">
+						<img src="./public/5.png" style="height: 250px;" />
+						<p>foot 域中包含有 2 部分：uplink 是指针域，用于指向内存块本身，通过 uplink 就可以获取该内存块所在内存的首地址。tag 同 head 域中的 tag 相同，都是记录内存块状态的。</p>
+					</section>
+					<section align="left" data-transition="convex">
 						<pre>
 						<code data-trim>
-							struct ListNode {
-							     int val;
-							     struct ListNode *next;
-							};
-							struct ListNode* reverseList(struct ListNode* head){
-							if (!head) return NULL;
-							struct ListNode *node = head, *next = head->next, *prev = NULL;
-							while (next) {
-							node->next = prev;
-							prev = node;
-							node = next;
-							next = node->next;
-							}
-							node->next = prev;
-							return node;
-							}
+							typedef struct WORD{
+								union{
+									struct WORD *llink; //指向直接前驱
+									struct WORD *uplink; //指向结点本身
+								};
+								int tag;//标记域,0表示为空闲块；1表示为占用块
+								int size;//记录内存块的存储大小
+								struct WORD *rlink;//指向直接后继
+								OtherType other;//内存块可能包含的其它的部分
+							}WORD,head,foot,*Space;
 						</code>
 						</pre>
 					</section>
-				</section>
+					<section align="left" data-transition="convex">
+						<h2>分配算法</h2>
+						<p>当用户申请空间时，系统可以采用 3 种分配方法:首部拟合法、最佳拟合法和最差拟合法。</p>
+					</section>
+					<section align="left" data-transition="slide">
+						<p>问题：在不断地分配的过程中，会产生一些容量极小以至无法利用的空闲块，这些不断生成的小内存块就会减慢遍历分配的速度。</p>
+						<p>解决办法：选定一个常量 e，每次分配空间时，判断当前内存块向用户分配空间后，如果剩余部分的容量比 e 小，则将整个内存块全部分配给用户。</p>
+					</section>
+					<section align="left" data-transition="slide">
+						<p>问题：采用头部拟合法进行分配时，如果每次都从 pav（表示头结点） 指向的结点开始遍历，在若干次后，会出现存储量小的结点密集地分布在 pav 结点附近的情况，严重影响遍历的时间。</p>
+						<p>解决办法就是：在每次分配空间后，让 pav 指针指向该分配空间结点的后继结点，然后从新的 pav 指向的结点开始下一次的分配。</p>
+					</section>
+					<section align="left" data-transition="slide">
+						<pre>
+							<code data-trim>
+								Space AllocBoundTag(Space *pav,int n){
+									Space p,f;
+									int e=10;//设定常亮 e 的值
+									//如果在遍历过程，当前空闲块的在存储容量比用户申请空间 n 值小，在该空闲块有右孩子的情况下直接跳过
+									for (p=(*pav); p&&p->size<n&&p->rlink!=(*pav); p=p->rlink);
+									//跳出循环，首先排除p为空和p指向的空闲块容量小于 n 的情况
+									if (!p ||p->size<n) {
+										return NULL;
+									}else{
+										//指针f指向p空闲块的foot域
+										f=FootLoc(p);
+										//调整pav指针的位置，为下次分配做准备
+										(*pav)=p->rlink;
+										//如果该空闲块的存储大小比 n 大，比 n+e 小，负责第一种情况，将 p 指向的空闲块全部分配给用户
+										if (p->size-n <= e) {
+											if ((*pav)==p) {
+												pav=NULL;
+											}
+											else{
+												//全部分配用户，即从可利用空间表中删除 p 空闲块
+												(*pav)->llink=p->llink;
+												p->llink->rlink=(*pav);
+											}
+											//同时调整head域和foot域中的tag值
+											p->tag=f->tag=1;
+										}
+										//否则，从p空闲块中拿出 大小为 n 的连续空间分配给用户，同时更新p剩余存储块中的信息。
+										else{
+											//更改分配块foot域的信息
+											f->tag=1;
+											p->size-=n;
+											//f指针指向剩余空闲块 p 的底部
+											f=FootLoc(p);
+											f->tag=0;   f->uplink=p;
+											p=f+1;//p指向的是分配给用户的块的head域，也就是该块的首地址
+											p->tag=1;   p->size=n;
+										}
+										return p;
+									}
+								}
+							</code>
+						</pre>
+					</section>
+					<section align="left" data-transition="convex">
+						<h2>回收算法</h2>
+						<p>在用户活动完成，系统需要立即回收被用户占用的存储空间，以备新的用户使用。</p>
+						<p>回收算法中需要解决的问题是：在若干次分配操作后，可利用空间块中会产生很多存储空间很小以致无法使用的空闲块。但是经过回收用户释放的空间后，可利用空间表中可能含有地址相邻的空闲块，回收算法需要将这些地址相邻的空闲块合并为大的空闲块供新的用户使用。</p>
+					</section>
+					<section align="left" data-transition="convex">
+						<p>合并空闲块的三种情况</p>
+						<p>该空闲块的左边有相邻的空闲块可以进行合并；</p>
+						<p>该空闲块的右边用相邻的空闲块可以进行合并；</p>
+						<p>该空闲块的左右两侧都有相邻的空闲块可以进行合并；</p>
+					</section>
+					<section align="left" data-transition="convex">
+						<p>如果当前空闲块的左右两侧都不是空闲块，而是占用块，此种情况下只需要将新的空闲块按照相应的规则（头部拟合法随意插入，其它两种方法在对应位置插入）插入到可利用空间表中即可。实现代码为：</p>
+						<pre>
+							<code data-trim>
+								//设定p指针指向的为用户释放的空闲块
+								p->tag=0;
+								//f指针指向p空闲块的foot域
+								Space f=FootLoc(p);
+								f->uplink=p;
+								f->tag=0;
+								//如果pav指针不存在，证明可利用空间表为空，此时设置p为头指针，并重新建立双向循环链表
+								if (!pav) {
+									pav=p->llink=p->rlink=p;
+								}else{
+									//否则，在p空闲块插入到pav指向的空闲块的左侧
+									Space q=pav->llink;
+									p->rlink=pav;
+									p->llink=q;
+									q->rlink=pav->llink=p;
+									pav=p;
+								}
+							</code>
+						</pre>
+					</section>
+					<section align="left" data-transition="slide">
+						<p>如果该空闲块的左侧相邻的块为空闲块，右侧为占用块，处理的方法是：只需要更改左侧空闲块中的 size 的大小，并重新设置左侧空闲块的 foot 域即可</p>
+						<img src="./public/6.png" style="height: 250px" />
+					</section>
+					<section align="left" data-transition="slide">
+						<pre>
+							<code data-trim>
+								//常量 n 表示当前空闲块的存储大小
+								int n=p->size;
+								Space s=(p-1)->uplink;//p-1 为当前块的左侧块的foot域，foot域中的uplink指向的就是左侧块的首地址，s指针代表的是当前块的左侧存储块
+								s->size+=n;//设置左侧存储块的存储容量
+								Space f=p+n-1;//f指针指向的是空闲块 p 的foot域
+								f->uplink=s;//这是foot域的uplink指针重新指向合并后的存储空间的首地址
+								f->tag=0;//设置foot域的tag标记为空闲块
+							</code>
+						</pre>
+					</section>
 
+				<section>
+					<p>如果用户释放的内存块的相邻左侧为占用块，右侧为空闲块，处理的方法为：将用户释放掉的存储块替换掉右侧的空闲块，同时更改存储块的 size 和右侧空闲块的 uplink 指针的指向</p>
+					<img src="./public/7.png" style="height: 250px" />
+				</section>
+				<section>
+					<pre>
+						<code data-trim>
+							Space t=p+p->size;//t指针指向右侧空闲块的首地址
+							p->tag=0;//初始化head域的tag值为0
+							//找到t右侧空闲块的前驱结点和后继结点，用当前释放的空闲块替换右侧空闲块
+							Space q=t->llink;
+							p->llink=q; q->rlink=p;
+							Space q1=t->rlink;
+							p->rlink=q1; q1->llink=p;
+							//更新释放块的size的值
+							p->size+=t->size;
+							//更改合并后的foot域的uplink指针的指向
+							Space f=FootLoc(t);
+							f->uplink=p;
+						</code>
+					</pre>
+				</section>
+					<section align="left" data-transition="slide">
+						<p>如果当前用户释放掉的空闲块，物理位置上相邻的左右两侧的内存块全部为空闲块，需要将 3 个空闲块合并为一个更大的块，操作的过程为：更新左侧空闲块的 size 的值，同时在可利用空间表中摘除右侧空闲块，最后更新合并后的大的空闲块的 foot 域。
+						</p>
+						<pre>
+							<code data-trim>
+								int n=p->size;
+								Space s=(p-1)->uplink;//找到释放内存块物理位置相邻的低地址的空闲块
+								Space t=p+p->size;//找到物理位置相邻的高地址处的空闲块
+								s->size+=n+t->size;//更新左侧空闲块的size的值
+								//从可利用空间表中摘除右侧空闲块
+								Space q=t->llink;
+								Space q1=t->rlink;
+								q->rlink=q1;
+								q1->llink=q;
+								//更新合并后的空闲块的uplink指针的指向
+								Space f=FootLoc(t);
+								f->uplink=s;
+							</code>
+						</pre>
+					</section>
+					<section align="center">
+						<h1>thanks</h1>
+					</section>
+					<section>
+						参考资料：http://data.biancheng.net/view/49.html
+					</section>
+				</section>
+					<section>
+						<section>
+							<h2>经典例题</h2>
+							<p>反转一个单链表</p>
+							<p>示例</p>
+							<p>输入: 1->2->3->4->5->NULL</p>
+							<p>输出: 5->4->3->2->1->NULL</p>
+						</section>
+						<section>
+							<pre>
+							<code data-trim>
+								struct ListNode {
+									 int val;
+									 struct ListNode *next;
+								};
+								struct ListNode* reverseList(struct ListNode* head){
+								if (!head) return NULL;
+								struct ListNode *node = head, *next = head->next, *prev = NULL;
+								while (next) {
+								node->next = prev;
+								prev = node;
+								node = next;
+								next = node->next;
+								}
+								node->next = prev;
+								return node;
+								}
+							</code>
+							</pre>
+						</section>
+					</section>
 			</div>
 		</div>
 
